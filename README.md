@@ -107,9 +107,8 @@ Now `pages` will only have `read` operation.
 
 After creating capabilities, you can a lot of things to them, such as:
 
-* Check if one `Capabilities` object has the exactly same capabilities of another by using `isMatching()` method;
-* Check if one `Capabilities` object has higher capabilities than another by using `isHigher()` method;
-* Check if one `Capabilities` object has lower capabilities than another by using `isLower()` method;
+* Check if one `Capabilities` object has the exactly same capabilities and operations of another by using `isMatching()` method;
+* Check if one `Capabilities` object fits another by using `isFitting()` method;
 * Check if a capability and operation is allowed at `Capabilities` object with `isAllowed()` method;
 * Check if any of required operations for a capabitity is allowed at `Capabilities` object with `isAnyAllowed()` method;
 * Check if all of required operations for a capability is allowed at `Capabilities` object with `isAllAllowed()` method;

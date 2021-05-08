@@ -2,6 +2,7 @@
 namespace Piggly\CapabilitiesManager;
 
 use ArrayIterator;
+use InvalidArgumentException;
 use IteratorAggregate;
 use JsonSerializable;
 use RuntimeException;
@@ -95,6 +96,7 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 	 * { "$key": [$operations], "$key": [$operations] }.
 	 *
 	 * @param string $json
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function fromJson ( string $json )
@@ -117,37 +119,62 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 	}
 
 	/**
-	 * Check if $caps and $this has the exactly same
-	 * Capabilities. All need to match for TRUE return.
+	 * Check if $this and $caps has the exactly same
+	 * Capabilities and operations. All need to match for TRUE return.
 	 * 
-	 * It alson means if $caps has one Capability which allows
-	 * "any" operation... the same Capability on $this
-	 * should also allow the "any" operation.
-	 * 
-	 * You may consider use methods isHigher() and isLower()
-	 * in some situations.
-	 *
 	 * @param Capabilities $caps
 	 * @since 1.0.0
+	 * @since 1.0.1 Should be exactly same.
 	 * @return bool
 	 */
 	public function isMatching ( Capabilities $caps ) : bool
 	{
-		foreach ( $caps as $cap )
+		foreach  ( $caps as $_external_caps )
 		{
-			$_cap = $this->get($cap->getKey());
+			$_local_cap = $this->get($_external_caps->getKey());
 
-			// has more Capability
-			if ( empty($_cap) )
+			// $caps has a capability $this hasn't
+			if ( empty($_local_cap) )
 			{ return false; }
 
-			// some allow any another don't
-			if ( ($cap->isAnyAllowed() && !$_cap->isAnyAllowed())
-					|| (!$cap->isAnyAllowed() && $_cap->isAnyAllowed()) )
+			// Cannot fit any operations if doesnt allow it
+			if ( $_external_caps->isAnyAllowed() && !$_local_cap->isAnyAllowed() )
 			{ return false; }
 
-			// they don't have all same operations
-			if ( !$_cap->hasAll($cap->get()) )
+			foreach ( $_local_cap->get() as $operation )
+			{
+				if ( \in_array($operation, $_external_caps->get(), true) === false )
+				{ return false; }
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check if $this fits $caps capabilities.
+	 * 
+	 *
+	 * @param Capabilities $caps
+	 * @since 1.0.1
+	 * @return boolean
+	 */
+	public function isFitting ( Capabilities $caps ) : bool
+	{
+		foreach  ( $caps as $_external_caps )
+		{
+			$_local_cap = $this->get($_external_caps->getKey());
+
+			// $caps has a capability $this hasn't
+			if ( empty($_local_cap) )
+			{ return false; }
+
+			// Cannot fit any operations if doesnt allow it
+			if ( $_external_caps->isAnyAllowed() && !$_local_cap->isAnyAllowed() )
+			{ return false; }
+			
+			// Cannot fit all $_external_caps operations
+			if ( !$_local_cap->hasAll($_external_caps->get()) )
 			{ return false; }
 		}
 
@@ -155,61 +182,35 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 	}
 
 	/**
-	 * Check if $caps has higher Capabilities than $this.
+	 * Check if has capability.
 	 *
-	 * @param Capabilities $caps
-	 * @since 1.0.0
+	 * @param Capability $capability
+	 * @since 1.0.1
 	 * @return boolean
 	 */
-	public function isHigher ( Capabilities $caps ) : bool
+	public function hasCapability ( Capability $capability )
 	{
-		foreach ( $caps as $cap )
-		{
-			$_cap = $this->get($cap->getKey());
+		$_cap = $this->get($capability->getKey());
 
-			// has more Capabilities = higher
-			if ( empty($_cap) )
-			{ return true; }
+		if ( empty($_cap) )
+		{ return false; }
 
-			// ["any"] > anything = higher
-			if ( $cap->isAnyAllowed() && !$_cap->isAnyAllowed() )
-			{ return true; }
-
-			// anything < ["any"] = lower
-			if ( $_cap->isAnyAllowed() )
-			{ return false; }
-
-			// which one has more operations = higher
-			if ( count($cap->get()) > count($_cap->get()) )
-			{ return true; }
-		}
-
-		// lower
-		return false;
+		return $_cap->hasAll($capability->get());
 	}
-
-	/**
-	 * Check if $caps has lower Capabilities than $this.
-	 *
-	 * @param Capabilities $caps
-	 * @since 1.0.0
-	 * @return boolean
-	 */
-	public function isLower ( Capabilities $caps ) : bool
-	{ return !$this->isHigher($caps); }
 
 	/**
 	 * Check if Capability $key is allowed and if the
 	 * requested $operation is allowed.
 	 *
-	 * @param string $key
+	 * @param Capability|string $key
 	 * @param string $operation
 	 * @since 1.0.0
+	 * @since 1.0.1 $key as Capability or string
 	 * @return boolean
 	 */
-	public function isAllowed ( string $key, string $operation )
+	public function isAllowed ( $key, string $operation )
 	{
-		$_cap = $this->get($key);
+		$_cap = $this->get($key instanceof Capability ? $key->getKey() : $key);
 
 		if ( empty($_cap) )
 		{ return false; }
@@ -221,17 +222,23 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 	 * Check if Capability $key is allowed and if any
 	 * requested $operations are allowed.
 	 *
-	 * @param string $key
+	 * @param Capability|string $key
 	 * @param string|array ...$operations
 	 * @since 1.0.0
+	 * @since 1.0.1 $key as Capability or string
+	 * @since 1.0.1 Throw an exception if $operations is empty
 	 * @return boolean
+	 * @throws InvalidArgumentException
 	 */
 	public function isAnyAllowed ( string $key, ...$operations )
 	{
-		$_cap = $this->get($key);
+		$_cap = $this->get($key instanceof Capability ? $key->getKey() : $key);
 
 		if ( empty($_cap) )
 		{ return false; }
+
+		if ( empty($operations) )
+		{ throw new InvalidArgumentException('You should sent some $operations at method `isAnyAllowed()`.'); }
 
 		return $_cap->hasAny($operations);
 	}
@@ -240,17 +247,23 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 	 * Check if Capability $key is allowed and if all
 	 * requested $operations are allowed.
 	 *
-	 * @param string $key
+	 * @param Capability|string $key
 	 * @param string ...$operations
 	 * @since 1.0.0
+	 * @since 1.0.1 $key as Capability or string
+	 * @since 1.0.1 Throw an exception if $operations is empty
 	 * @return boolean
+	 * @throws InvalidArgumentException
 	 */
 	public function isAllAllowed ( string $key, ...$operations )
 	{
-		$_cap = $this->get($key);
+		$_cap = $this->get($key instanceof Capability ? $key->getKey() : $key);
 
 		if ( empty($_cap) )
 		{ return false; }
+
+		if ( empty($operations) )
+		{ throw new InvalidArgumentException('You should sent some $operations at method `isAllAllowed()`.'); }
 
 		return $_cap->hasAll($operations);
 	}
@@ -313,7 +326,7 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 			if ( empty($_cap) )
 			{ $this->add($cap); continue; }
 
-			$_cap->merge($cap->getOperations());
+			$_cap->merge($cap->get());
 		}
 
 		return $this;

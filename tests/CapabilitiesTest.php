@@ -66,7 +66,7 @@ class CapabilitiesTest extends TestCase
 	}
 
 	/** @test Get only Capabilities keys. */
-	public function getPermsKeys ()
+	public function getCapabilitiesKeys ()
 	{ $this->assertSame( $this->_caps->getKeys(), ['manage_options', 'posts', 'comments'] ); }
 
 	/** @test Check if an operation is allowed to Capability. */
@@ -128,7 +128,7 @@ class CapabilitiesTest extends TestCase
 	}
 
 	/** @test Add a new Capability as string. */
-	public function addCapabilitiestring ()
+	public function addCapabilityString ()
 	{ 
 		$this->_caps->add(new Capability('pages:read,write,delete'));
 
@@ -151,6 +151,23 @@ class CapabilitiesTest extends TestCase
 		$this->assertSame( 
 			$this->_caps->toArray(), [ 
 				'manage_options' => [ 'read', 'write' ],
+				'posts' => [ 'read', 'write', 'delete' ],
+				'comments' => [ 'read' ],
+				'pages' => [ 'read', 'write', 'delete' ],
+				'stories' => [ 'read' ]
+			] 
+		); 
+	}
+
+	/** @test Merge two Capabilities object. */
+	public function mergeTwoCapabilitiesWithAnExistingCapabilityMergingOperations ()
+	{ 
+		$caps = new Capabilities('manage_options:delete pages:read,write,delete stories:read');
+		$this->_caps->merge($caps);
+
+		$this->assertSame( 
+			$this->_caps->toArray(), [ 
+				'manage_options' => [ 'read', 'write', 'delete' ],
 				'posts' => [ 'read', 'write', 'delete' ],
 				'comments' => [ 'read' ],
 				'pages' => [ 'read', 'write', 'delete' ],
@@ -205,21 +222,9 @@ class CapabilitiesTest extends TestCase
 		$this->assertFalse( $this->_caps->isMatching($caps) ); 
 	}
 
-	/** @test Assert if $caps is lower than $this->_caps with less Capabilities. */
-	public function assertIsLowerWithLessCapability ()
-	{ 
-		$caps = new Capabilities(); 
-
-		$caps
-			->add(new Capability('manage_options:read,write'))
-			->add(new Capability('posts:read,write,delete'));
-
-		$this->assertTrue( $this->_caps->isLower($caps) ); 
-	}
-
-	/** @test Assert if $caps is not lower than $this->_caps with more Capabilities. */
-	public function assertIsNotLowerWithMoreCapability ()
-	{ 
+	/** @test Assert if same capabilities is fitting */
+	public function assertSameCapabilitiesIsFitting ()
+	{
 		$caps = new Capabilities(); 
 
 		$caps
@@ -228,12 +233,33 @@ class CapabilitiesTest extends TestCase
 			->add(new Capability('comments:read'))
 			->add(new Capability('pages'));
 
-		$this->assertFalse( $this->_caps->isLower($caps) ); 
+		$this->_caps->add(new Capability('pages'));
+		$this->assertTrue( $this->_caps->isFitting($caps) ); 
 	}
 
-	/** @test Assert if $caps is lower than $this->_caps when $this->_caps has any operation. */
-	public function assertIsLowerWithAnyOperation ()
-	{ 
+	/** @test Assert if lower capabilities is fitting */
+	public function assertLowerCapabilitiesIsFitting ()
+	{
+		$caps = new Capabilities(); 
+		$caps
+			->add(new Capability('manage_options:read'))
+			->add(new Capability('posts:read'));
+		$this->assertTrue( $this->_caps->isFitting($caps) ); 
+	}
+
+	/** @test Assert if higher capabilities is fitting */
+	public function assertDifferentsCapabilitiesIsNotFitting ()
+	{
+		$caps = new Capabilities(); 
+		$caps
+			->add(new Capability('manage_options:delete'))
+			->add(new Capability('posts:read'));
+		$this->assertFalse( $this->_caps->isFitting($caps) ); 
+	}
+
+	/** @test Assert if any capabilities is fitting */
+	public function assertAnyCapabilitiesIsFitting ()
+	{
 		$caps = new Capabilities(); 
 
 		$caps
@@ -243,48 +269,24 @@ class CapabilitiesTest extends TestCase
 			->add(new Capability('pages:read'));
 
 		$this->_caps->add(new Capability('pages'));
-		$this->assertTrue( $this->_caps->isLower($caps) ); 
+		$this->assertTrue( $this->_caps->isFitting($caps) ); 
 	}
 
-	/** @test Assert if $caps is higher than $this->_caps when it has any operation. */
-	public function assertIsNotLowerWithAnyOperation ()
-	{ 
+	/** @test Assert if any capabilities is fitting */
+	public function assertAnyCapabilitiesIsNotFitting ()
+	{
 		$caps = new Capabilities(); 
-
-		$caps
-			->add(new Capability('manage_options'))
-			->add(new Capability('posts:read,write,delete'))
-			->add(new Capability('comments:read'))
-			->add(new Capability('pages'));
-
-		$this->_caps->add(new Capability('pages:read'));
-		$this->assertFalse( $this->_caps->isLower($caps) ); 
+		$caps->add(new Capability('manage_options'));
+		$this->assertFalse( $this->_caps->isFitting($caps) ); 
 	}
 
-	/** @test Assert if $caps is lower than $this->_caps with less operations. */
-	public function assertIsNotLowerWithLessOperations ()
-	{ 
+	/** @test Assert if any capabilities is fitting */
+	public function assertAnyToAnyCapabilitiesIsFitting ()
+	{
 		$caps = new Capabilities(); 
-
-		$caps
-			->add(new Capability('manage_options:read,write'))
-			->add(new Capability('posts:read,write'))
-			->add(new Capability('comments:read'));
-
-		$this->assertTrue( $this->_caps->isLower($caps) ); 
-	}
-
-	/** @test Assert if $caps is not lower than $this->_caps with more operations. */
-	public function assertIsNotLowerWithMoreOperations ()
-	{ 
-		$caps = new Capabilities(); 
-
-		$caps
-			->add(new Capability('manage_options:read,write'))
-			->add(new Capability('posts:read,write,delete'))
-			->add(new Capability('comments:read,write'));
-
-		$this->assertFalse( $this->_caps->isLower($caps) ); 
+		$caps->add(new Capability('pages'));
+		$this->_caps->add(new Capability('pages'));
+		$this->assertTrue( $this->_caps->isFitting($caps) ); 
 	}
 
 	/** @test Remove a Capability by a Capability object. */
@@ -322,8 +324,8 @@ class CapabilitiesTest extends TestCase
 		// It should remove any operations 
 		// from manage_options and comments.
 		$caps
-			->add((new Capability())->setKey('manage_options'))
-			->add((new Capability())->setKey('comments'));
+			->add(new Capability('manage_options'))
+			->add(new Capability('comments'));
 
 		$this->_caps->removeMany($caps);
 
@@ -342,8 +344,8 @@ class CapabilitiesTest extends TestCase
 		// It should remove any operations from comments
 		// and only write operation from manage_options.
 		$caps
-			->add((new Capability())->setKey('manage_options')->add('write'))
-			->add((new Capability())->setKey('comments'));
+			->add(new Capability('manage_options:write'))
+			->add((new Capability())->setKey('comments')->allowAny());
 
 		$this->_caps->removeMany($caps);
 

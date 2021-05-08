@@ -1,6 +1,14 @@
 <?php
 namespace Piggly\CapabilitiesManager\Enum;
 
+/**
+ * Manages all available operations.
+ * 
+ * @since 1.0.0 
+ * @package Piggly\CapabilitiesManager
+ * @subpackage Piggly\CapabilitiesManager\Enum
+ * @author Caique <caique@piggly.com.br>
+ */
 class CapabilityOperations
 {
 	/**
@@ -69,4 +77,24 @@ class CapabilityOperations
 	 */
 	public static function operations () : array
 	{ return self::$operations; }
+
+	/**
+	 * Check if $operations has all operations available.
+	 *
+	 * @param array $operations
+	 * @since 1.0.1
+	 * @return bool
+	 */
+	public static function hasAll ( array $operations ) : bool
+	{ return empty(array_diff(self::$operations, $operations)); }
+
+	/**
+	 * Check if $operations has unexpected operations.
+	 *
+	 * @param array $operations
+	 * @since 1.0.1
+	 * @return bool
+	 */
+	public static function hasInvalid ( array $operations ) : bool
+	{ return !empty(array_diff($operations, self::$operations)); }
 }
