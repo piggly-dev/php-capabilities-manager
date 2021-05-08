@@ -23,3 +23,8 @@ All notable changes to `piggly/php-Capability-manager` will be documented in thi
 * Added `hasCapability()` method if has a capability by a `Capability` object;
 * Changed `isMatching()` behavior to strict matching two capabilities;
 * `isAnyAllowed()` and `isAllAllowed()` methods will throw an exception if `$operators` were not set.
+
+## 1.0.1 - `2021-05-08`
+
+* `fromJson()` to static method at `Capabilities` object;
+* Allow `$default_operations` at `Capabilities` object constructor.

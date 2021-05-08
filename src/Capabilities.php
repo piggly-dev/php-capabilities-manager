@@ -42,10 +42,12 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 	 * Capabilities are delimited by a space char.
 	 *
 	 * @param string $capabilities A string with all Capabilities.
+	 * @param array $default_operators To apply if operations were not set to a Capability.
 	 * @since 1.0.0
+	 * @since 1.0.1 $default_operators
 	 * @return void
 	 */
-	public function __construct ( string $capabilities = null )
+	public function __construct ( string $capabilities = null, array $default_operators = null )
 	{
 		$this->_caps = [];
 
@@ -97,10 +99,14 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 	 *
 	 * @param string $json
 	 * @since 1.0.0
+	 * @since 1.0.1 Static method
 	 * @return void
 	 */
-	public function fromJson ( string $json )
-	{ return $this->fromArray(json_decode($json, true)); }
+	public static function fromJson ( string $json )
+	{ 
+		$capabilities = new Capabilities();
+		return $capabilities->fromArray(json_decode($json, true)); 
+	}
 
 	/**
 	 * Get all Capability keys.
