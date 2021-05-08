@@ -41,7 +41,7 @@ class Capability implements Serializable, JsonSerializable
 	 * @param string $capability
 	 * @param array $default_operators To apply if operations were not set.
 	 * @since 1.0.0
-	 * @since 1.0.1 Default operations or empty array to $this->_operations
+	 * @since 1.0.0 Default operations or empty array to $this->_operations
 	 * @return void
 	 */
 	public function __construct ( string $capability = null, array $default_operators = null )
@@ -131,7 +131,7 @@ class Capability implements Serializable, JsonSerializable
 	 * { "$key": [$operations] }.
 	 *
 	 * @param string $json
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 * @return void
 	 * @throws InvalidArgumentException
 	 */
@@ -203,7 +203,7 @@ class Capability implements Serializable, JsonSerializable
 	 *
 	 * @param string|array ...$operations
 	 * @since 1.0.0
-	 * @since 1.0.1 Thrown an exception if cannot add because capability allow any.
+	 * @since 1.0.0 Thrown an exception if cannot add because capability allow any.
 	 * @return self
 	 * @throws InvalidArgumentException If cannot add because capability allow any.
 	 */
@@ -225,7 +225,7 @@ class Capability implements Serializable, JsonSerializable
 	 *
 	 * @param string|array ...$operations
 	 * @since 1.0.0
-	 * @since 1.0.1 Thrown an exception if cannot add because capability allow any.
+	 * @since 1.0.0 Thrown an exception if cannot add because capability allow any.
 	 * @return self
 	 */
 	public function insert ( ...$operations )
@@ -242,7 +242,7 @@ class Capability implements Serializable, JsonSerializable
 	 *
 	 * @param array $operations
 	 * @since 1.0.0
-	 * @since 1.0.1 Add "any" if $this->_operations has all operations available.
+	 * @since 1.0.0 Add "any" if $this->_operations has all operations available.
 	 * @return self
 	 * @throws InvalidArgumentException
 	 */
@@ -262,7 +262,7 @@ class Capability implements Serializable, JsonSerializable
 	 * 
 	 * @param string $operations
 	 * @since 1.0.0
-	 * @since 1.0.1 If any is allowed, add all available operations removing $operations.
+	 * @since 1.0.0 If any is allowed, add all available operations removing $operations.
 	 * @return self
 	 * @throws InvalidArgumentException
 	 */
@@ -334,7 +334,7 @@ class Capability implements Serializable, JsonSerializable
 	 * Allow any operations.
 	 *
 	 * @since 1.0.0
-	 * @since 1.0.1 Return $this
+	 * @since 1.0.0 Return $this
 	 * @return self
 	 */
 	public function allowAny ()
@@ -343,7 +343,7 @@ class Capability implements Serializable, JsonSerializable
 	/**
 	 * Disallow any operation.
 	 *
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 * @return self
 	 */
 	public function disallowAny ()

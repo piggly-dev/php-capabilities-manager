@@ -82,7 +82,7 @@ class CapabilityOperations
 	 * Check if $operations has all operations available.
 	 *
 	 * @param array $operations
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 * @return bool
 	 */
 	public static function hasAll ( array $operations ) : bool
@@ -92,7 +92,7 @@ class CapabilityOperations
 	 * Check if $operations has unexpected operations.
 	 *
 	 * @param array $operations
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 * @return bool
 	 */
 	public static function hasInvalid ( array $operations ) : bool

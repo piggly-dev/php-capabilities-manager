@@ -124,7 +124,7 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 	 * 
 	 * @param Capabilities $caps
 	 * @since 1.0.0
-	 * @since 1.0.1 Should be exactly same.
+	 * @since 1.0.0 Should be exactly same.
 	 * @return bool
 	 */
 	public function isMatching ( Capabilities $caps ) : bool
@@ -156,7 +156,7 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 	 * 
 	 *
 	 * @param Capabilities $caps
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 * @return boolean
 	 */
 	public function isFitting ( Capabilities $caps ) : bool
@@ -185,7 +185,7 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 	 * Check if has capability.
 	 *
 	 * @param Capability $capability
-	 * @since 1.0.1
+	 * @since 1.0.0
 	 * @return boolean
 	 */
 	public function hasCapability ( Capability $capability )
@@ -205,7 +205,7 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 	 * @param Capability|string $key
 	 * @param string $operation
 	 * @since 1.0.0
-	 * @since 1.0.1 $key as Capability or string
+	 * @since 1.0.0 $key as Capability or string
 	 * @return boolean
 	 */
 	public function isAllowed ( $key, string $operation )
@@ -225,8 +225,8 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 	 * @param Capability|string $key
 	 * @param string|array ...$operations
 	 * @since 1.0.0
-	 * @since 1.0.1 $key as Capability or string
-	 * @since 1.0.1 Throw an exception if $operations is empty
+	 * @since 1.0.0 $key as Capability or string
+	 * @since 1.0.0 Throw an exception if $operations is empty
 	 * @return boolean
 	 * @throws InvalidArgumentException
 	 */
@@ -250,8 +250,8 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 	 * @param Capability|string $key
 	 * @param string ...$operations
 	 * @since 1.0.0
-	 * @since 1.0.1 $key as Capability or string
-	 * @since 1.0.1 Throw an exception if $operations is empty
+	 * @since 1.0.0 $key as Capability or string
+	 * @since 1.0.0 Throw an exception if $operations is empty
 	 * @return boolean
 	 * @throws InvalidArgumentException
 	 */
