@@ -83,7 +83,7 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 	 *
 	 * @param array $caps
 	 * @since 1.0.0
-	 * @return void
+	 * @return self
 	 */
 	public function fromArray ( array $caps )
 	{
@@ -100,7 +100,7 @@ class Capabilities implements Serializable, JsonSerializable, IteratorAggregate
 	 * @param string $json
 	 * @since 1.0.0
 	 * @since 1.0.1 Static method
-	 * @return void
+	 * @return Capabilities
 	 */
 	public static function fromJson ( string $json )
 	{ 
