@@ -9,6 +9,7 @@ The **Capability Manager** is a library which allows better controlling and chec
 It's a common practice to systems have some `scopes`, `roles` or even `permissions` and `capabilities` to Users or Clients. And often, they also attached to operations. This library assumes the following operations exists:
 
 Operation | Description
+--- | ---
 read | Can only read resources.
 write | Can create and edit resources.
 delete | Can send a resource to trash.
@@ -20,6 +21,7 @@ You can, of course, customize them by using`\Piggly\CapabilitiesManager\Enum\Cap
 After, these operations can be attached to capabilities. For example, see below some capabilities samples:
 
 Capability | Description
+--- | ---
 manage_options | Can manages options.
 posts | Can manages posts.
 comments | Can manages comments.
